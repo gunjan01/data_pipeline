@@ -17,8 +17,7 @@ type Es struct {
 // New returns an instance of elasticsearch client.
 func New() (*Es, error) {
 	// Obtain a client and connect to the default Elasticsearch installation
-	// on 127.0.0.1:9200. Of course you can configure your client to connect
-	// to other hosts and configure it in various other ways.
+	// on 127.0.0.1:9200.
 	client, err := elastic.NewClient(
 		elastic.SetURL(config.ElasticSearchURL),
 		elastic.SetSniff(false),

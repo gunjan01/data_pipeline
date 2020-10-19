@@ -1,12 +1,10 @@
 package search
 
-import (
-	"github.com/olivere/elastic"
-)
+import elastic "github.com/olivere/elastic"
 
 // NewSearchSourceBuilder builds the elastic searchsource.
 func NewSearchSourceBuilder(startDate string, endDate string) *elastic.SearchSource {
-	searchSource := elastic.NewSearchSource().Size(0)
+	searchSource := elastic.NewSearchSource().Size(999)
 	searchSource.Aggregation("queries", buildBreakdown(startDate, endDate))
 
 	return searchSource
@@ -16,7 +14,7 @@ func buildBreakdown(startDate string, endDate string) *elastic.FilterAggregation
 	countSubAggregation := elastic.NewSumAggregation().Field("count")
 
 	queryAggregation := elastic.NewTermsAggregation().
-		Field("query").
+		Field("query.keyword").
 		Order("_count", false).
 		Size(1000)
 	queryAggregation.SubAggregation("bucket_sum", countSubAggregation)

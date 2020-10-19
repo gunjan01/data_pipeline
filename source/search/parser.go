@@ -1,8 +1,8 @@
 package search
 
 import (
+	"encoding/json"
 	"errors"
-	"fmt"
 
 	elastic "github.com/olivere/elastic"
 	"github.com/sirupsen/logrus"
@@ -34,11 +34,12 @@ func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) (Res
 		return response, err
 	}
 
-	search := c.Client.Search(index).Source(source)
+	d, _ := json.Marshal(source)
+	logrus.Infof("BREAKDOWN SOURCE SHOP STATS: %s\n", d)
 
+	search := c.Client.Search(index).Source(source)
 	result, err := search.Do(c.ctx)
 	if err != nil {
-		fmt.Errorf("%+v", err)
 		return response, err
 	}
 
@@ -59,7 +60,7 @@ func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) (Res
 // extarct Result extracts the results from the ES results.
 func extractResult(result *elastic.SearchResult) ([]teststruct, error) {
 	response := []teststruct{}
-	count := 0
+
 	breakdown, ok := result.Aggregations.Filter("queries")
 	if ok {
 		if queryBreakdown, ok := breakdown.Aggregations.Terms("query_breakdown"); ok {
@@ -72,10 +73,6 @@ func extractResult(result *elastic.SearchResult) ([]teststruct, error) {
 				response = append(response, responseResult)
 			}
 
-			response = append(response, teststruct{
-				query: "Queries < 50",
-				count: count,
-			})
 		}
 	}
 
