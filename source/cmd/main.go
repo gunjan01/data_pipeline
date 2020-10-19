@@ -13,7 +13,7 @@ func main() {
 		panic(err)
 	}
 
-	searchSource := search.NewSearchSourceBuilder("2020-06-01", "2020-06-03")
+	searchSource := search.NewSearchSourceBuilder("2020-06-01", "2020-06-04")
 	response, err := client.ParseResults(config.SearchIndex, searchSource)
 	if err != nil {
 		panic(err)
