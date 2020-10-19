@@ -23,6 +23,10 @@ func TestConfig(t *testing.T) {
 			expectedValue: 9999,
 			variable:      DefaultSize,
 		},
+		"tests whether Port is set": {
+			expectedValue: 9090,
+			variable:      Port,
+		},
 	}
 
 	for name, test := range tests {

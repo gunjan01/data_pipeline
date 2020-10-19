@@ -10,6 +10,14 @@
   version = "v1.1.1"
 
 [[projects]]
+  digest = "1:803abc7a53fb2186124661f955e52848e62d99a3a56d5a137d9a72ecc534746c"
+  name = "github.com/go-zoo/bone"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "31c3a0bb520c6d7a63dbb942459a3067787a975e"
+  version = "v1.3.0"
+
+[[projects]]
   digest = "1:e0b019ee3a64ce51eeb7e0097a372305ac8caf338e50adf8e4bf3b7ce928e132"
   name = "github.com/josharian/intern"
   packages = ["."]
@@ -98,6 +106,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/go-zoo/bone",
     "github.com/olivere/elastic",
     "github.com/sirupsen/logrus",
     "github.com/stretchr/testify/assert",
