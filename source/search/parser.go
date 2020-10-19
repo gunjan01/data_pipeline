@@ -1,7 +1,6 @@
 package search
 
 import (
-	"encoding/json"
 	"errors"
 
 	elastic "github.com/olivere/elastic"
@@ -10,7 +9,7 @@ import (
 
 type teststruct struct {
 	query string
-	count int
+	count float64
 }
 
 type ResponseStruct struct {
@@ -33,9 +32,6 @@ func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) (Res
 	if err != nil {
 		return response, err
 	}
-
-	d, _ := json.Marshal(source)
-	logrus.Infof("BREAKDOWN SOURCE SHOP STATS: %s\n", d)
 
 	search := c.Client.Search(index).Source(source)
 	result, err := search.Do(c.ctx)
@@ -60,19 +56,34 @@ func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) (Res
 // extarct Result extracts the results from the ES results.
 func extractResult(result *elastic.SearchResult) ([]teststruct, error) {
 	response := []teststruct{}
-
+	var count float64
 	breakdown, ok := result.Aggregations.Filter("queries")
 	if ok {
 		if queryBreakdown, ok := breakdown.Aggregations.Terms("query_breakdown"); ok {
 			buckets := queryBreakdown.Buckets
+
 			for _, bucket := range buckets {
-				responseResult := teststruct{
-					query: bucket.Key.(string),
-					count: int(bucket.DocCount),
+				// Extract the sum Aggregation
+				sumAggregation, ok := bucket.Aggregations.Sum("bucket_sum")
+				if ok {
+					value := *sumAggregation.Value
+					if value < 50 {
+						count = count + value
+						continue
+					}
+
+					responseResult := teststruct{
+						query: bucket.Key.(string),
+						count: value,
+					}
+					response = append(response, responseResult)
 				}
-				response = append(response, responseResult)
 			}
 
+			response = append(response, teststruct{
+				query: "Query < 50",
+				count: count,
+			})
 		}
 	}
 
