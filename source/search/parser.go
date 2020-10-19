@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	elastic "github.com/olivere/elastic"
-	"github.com/sirupsen/logrus"
 )
 
 type teststruct struct {
@@ -24,9 +23,8 @@ func (c *Es) searchResultHasErr(searchErr *elastic.ErrorDetails) error {
 	return errors.New(searchErr.Reason)
 }
 
-// ParseResults will make the call to elastic and construct the response.
+// ParseResults will make the actual call to elastic, parse the result and construct the response.
 func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) (ResponseStruct, error) {
-	logrus.Infof(index)
 	response := ResponseStruct{}
 	source, err := searchSource.Source()
 	if err != nil {
@@ -39,7 +37,7 @@ func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) (Res
 		return response, err
 	}
 
-	grouping, err := extractResult(result)
+	grouping, err := ExtractResult(result)
 	if err != nil {
 		return response, err
 	}
@@ -53,8 +51,8 @@ func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) (Res
 	return response, nil
 }
 
-// extarct Result extracts the results from the ES results.
-func extractResult(result *elastic.SearchResult) ([]teststruct, error) {
+// ExtractResult extracts the results from the ES results.
+func ExtractResult(result *elastic.SearchResult) ([]teststruct, error) {
 	response := []teststruct{}
 	var count float64
 	breakdown, ok := result.Aggregations.Filter("queries")

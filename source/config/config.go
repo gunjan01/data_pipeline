@@ -12,4 +12,7 @@ var (
 
 	// SearchIndex is the elastic index that will be queried.
 	SearchIndex string = "test"
+
+	// DefaultSize is the default size used in aggregations.
+	DefaultSize int = 9999
 )

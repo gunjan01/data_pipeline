@@ -1,0 +1,1 @@
+{"aggregations":{"queries":{"filter":{"bool":{"must":[{"range":{"date":{"from":"2020-06-01","include_lower":true,"include_upper":true,"to":"2020-06-02"}}}]}},"aggregations":{"query_breakdown":{"terms":{"field":"query.keyword"},"aggregations":{"bucket_sum":{"sum":{"field":"count"}}}}}}}}

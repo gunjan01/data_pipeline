@@ -21,3 +21,5 @@ func main() {
 
 	fmt.Println(response)
 }
+
+// Dont repetadely load csv. Use action => 'update'

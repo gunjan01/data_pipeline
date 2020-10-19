@@ -10,7 +10,10 @@ func NewSearchSourceBuilder(startDate string, endDate string) *elastic.SearchSou
 	return searchSource
 }
 
+// buildBreakdown builds the nested aggregation. We aggregate the results on the query and apply
+// a sum aggregation after filtering it for a specific date range.
 func buildBreakdown(startDate string, endDate string) *elastic.FilterAggregation {
+	// Apply a sum operation on each count field.
 	countSubAggregation := elastic.NewSumAggregation().Field("count")
 
 	queryAggregation := elastic.NewTermsAggregation().
@@ -27,6 +30,8 @@ func buildBreakdown(startDate string, endDate string) *elastic.FilterAggregation
 	return filtersAggregation
 }
 
+// buildDateRangeQuery builds a range query and extracts results based on a
+// specific date range.
 func buildDateRangeQuery(startDate string, endDate string) *elastic.BoolQuery {
 	return elastic.NewBoolQuery().Must(
 		elastic.NewRangeQuery("date").Gte(startDate).Lte(endDate),
