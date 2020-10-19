@@ -6,13 +6,11 @@ import (
 	elastic "github.com/olivere/elastic"
 )
 
-type teststruct struct {
-	query string
-	count float64
-}
-
-type ResponseStruct struct {
-	test []teststruct
+// CollateData contains the collated data
+// for a particular data-range.
+type CollateData struct {
+	Query string  `json:"query"`
+	Count float64 `json:"count"`
 }
 
 func (c *Es) searchResultHasErr(searchErr *elastic.ErrorDetails) error {
@@ -24,8 +22,8 @@ func (c *Es) searchResultHasErr(searchErr *elastic.ErrorDetails) error {
 }
 
 // ParseResults will make the actual call to elastic, parse the result and construct the response.
-func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) (ResponseStruct, error) {
-	response := ResponseStruct{}
+func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) ([]CollateData, error) {
+	response := []CollateData{}
 	source, err := searchSource.Source()
 	if err != nil {
 		return response, err
@@ -37,7 +35,7 @@ func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) (Res
 		return response, err
 	}
 
-	grouping, err := ExtractResult(result)
+	collatedData, err := ExtractResult(result)
 	if err != nil {
 		return response, err
 	}
@@ -47,13 +45,12 @@ func (c *Es) ParseResults(index string, searchSource *elastic.SearchSource) (Res
 		return response, err
 	}
 
-	response.test = grouping
-	return response, nil
+	return collatedData, nil
 }
 
 // ExtractResult extracts the results from the ES results.
-func ExtractResult(result *elastic.SearchResult) ([]teststruct, error) {
-	response := []teststruct{}
+func ExtractResult(result *elastic.SearchResult) ([]CollateData, error) {
+	response := []CollateData{}
 	var count float64
 	breakdown, ok := result.Aggregations.Filter("queries")
 	if ok {
@@ -70,17 +67,17 @@ func ExtractResult(result *elastic.SearchResult) ([]teststruct, error) {
 						continue
 					}
 
-					responseResult := teststruct{
-						query: bucket.Key.(string),
-						count: value,
+					responseResult := CollateData{
+						Query: bucket.Key.(string),
+						Count: value,
 					}
 					response = append(response, responseResult)
 				}
 			}
 
-			response = append(response, teststruct{
-				query: "Query < 50",
-				count: count,
+			response = append(response, CollateData{
+				Query: "Query < 50",
+				Count: count,
 			})
 		}
 	}

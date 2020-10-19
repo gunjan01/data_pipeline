@@ -1,6 +1,9 @@
 package config
 
 var (
+	// Port the server is running on.
+	Port int = 9090
+
 	// ElasticSearchURL is URL to elastic search.
 	ElasticSearchURL string = "http://localhost:9200/"
 
