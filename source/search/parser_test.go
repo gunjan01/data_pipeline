@@ -1,12 +1,19 @@
 package search
 
-/*
+import (
+	"encoding/json"
+	"testing"
+
+	elastic "github.com/olivere/elastic"
+	"github.com/stretchr/testify/assert"
+)
+
 func TestExtractResult(t *testing.T) {
 	tests := map[string]struct {
-		result       *elastic.SearchResult
-		response     []teststruct
-		err          error
-		BreakdownLen int
+		result           *elastic.SearchResult
+		expectedResponse []CollateData
+		err              error
+		BreakdownLen     int
 	}{
 		"Basic test": {
 			result: &elastic.SearchResult{
@@ -18,31 +25,47 @@ func TestExtractResult(t *testing.T) {
 					}
 				}(),
 			},
-			BreakdownLen: 2,
+			expectedResponse: []CollateData{
+				CollateData{
+					Query: "best web hosting",
+					Count: 4000.0,
+				},
+				CollateData{
+					Query: "cheap web hosting",
+					Count: 8000.0,
+				},
+				CollateData{
+					Query: "Query < 50",
+					Count: 3.0,
+				},
+			},
+			BreakdownLen: 3,
 		},
-		/*	"no breakdown test": {
+		"no breakdown present": {
 			result: &elastic.SearchResult{
 				TookInMillis: 100,
 				Aggregations: func() elastic.Aggregations {
-					cat := json.RawMessage(`{"doc_count_error_upper_bound":0,"sum_other_doc_count":0,"buckets":[]}`)
+					raw := json.RawMessage(`{"doc_count":8,"query_breakdown":{"doc_count_error_upper_bound":0,"sum_other_doc_count":0,"buckets":[]}}`)
 					return map[string]*json.RawMessage{
-						"l1_locations": &cat,
-						"l2_locations": &cat,
+						"queries": &raw,
 					}
 				}(),
 			},
-			response: &searchV2.GetLocationBreakdownResponse{
-				Breakdown: make(map[*config.Location]int32),
-			},
-			BreakdownLen: 0,
+			expectedResponse: []CollateData{},
+			BreakdownLen:     0,
 		},
 	}
 
 	for testCase, test := range tests {
 		t.Run(testCase, func(t *testing.T) {
 			response, err := ExtractResult(test.result)
-			//assert.Len(t, parser.response.Breakdown, test.BreakdownLen)
+
+			if err != nil {
+				t.Errorf("Test failed with err: %v", err)
+			}
+
+			assert.Equal(t, response, test.expectedResponse)
+			assert.Equal(t, len(response), test.BreakdownLen)
 		})
 	}
 }
-*/

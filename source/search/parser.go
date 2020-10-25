@@ -57,28 +57,30 @@ func ExtractResult(result *elastic.SearchResult) ([]CollateData, error) {
 		if queryBreakdown, ok := breakdown.Aggregations.Terms("query_breakdown"); ok {
 			buckets := queryBreakdown.Buckets
 
-			for _, bucket := range buckets {
-				// Extract the sum Aggregation
-				sumAggregation, ok := bucket.Aggregations.Sum("bucket_sum")
-				if ok {
-					value := *sumAggregation.Value
-					if value < 50 {
-						count = count + value
-						continue
-					}
+			if len(buckets) > 0 {
+				for _, bucket := range buckets {
+					// Extract the sum Aggregation
+					sumAggregation, ok := bucket.Aggregations.Sum("bucket_sum")
+					if ok {
+						value := *sumAggregation.Value
+						if value < 50 {
+							count = count + value
+							continue
+						}
 
-					responseResult := CollateData{
-						Query: bucket.Key.(string),
-						Count: value,
+						responseResult := CollateData{
+							Query: bucket.Key.(string),
+							Count: value,
+						}
+						response = append(response, responseResult)
 					}
-					response = append(response, responseResult)
 				}
-			}
 
-			response = append(response, CollateData{
-				Query: "Query < 50",
-				Count: count,
-			})
+				response = append(response, CollateData{
+					Query: "Query < 50",
+					Count: count,
+				})
+			}
 		}
 	}
 

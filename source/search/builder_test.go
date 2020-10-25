@@ -39,6 +39,11 @@ func TestBuildDateRangeQuery(t *testing.T) {
 			if query != nil {
 				src, err := query.Source()
 				assert.Nil(t, err)
+				/*fmt.Println("*******************************")
+
+				d, _ := json.Marshal(src)
+				logrus.Debugf("BREAKDOWN SOURCE: %s\n", d)
+				fmt.Println(string(d))*/
 
 				jsonFile, jsonData := getJSONFileData(t, src, test.fixtureName)
 
@@ -89,8 +94,16 @@ func TestNewSearchSourceBuilder(t *testing.T) {
 	}{
 		"Basic test covering the happy path": {
 			startDate:   "2020-06-01",
-			endDate:     "2020-06-02",
-			fixtureName: "TestQueryBreakdown_1",
+			endDate:     "2020-06-03",
+			fixtureName: "TestSearchSourceBuilder_1",
+		},
+		"Basic test with only lower limit of date range set": {
+			startDate:   "2020-06-01",
+			fixtureName: "TestSearchSourceBuilder_2",
+		},
+		"Basic test with only upper limit of date range set": {
+			endDate:     "2020-06-03",
+			fixtureName: "TestSearchSourceBuilder_3",
 		},
 	}
 
