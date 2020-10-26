@@ -16,7 +16,7 @@ func TestConfig(t *testing.T) {
 			variable:      ElasticSearchURL,
 		},
 		"tests whether SearchIndex is set": {
-			expectedValue: "test",
+			expectedValue: "dimensions",
 			variable:      SearchIndex,
 		},
 		"tests whether DefaultSize is set": {

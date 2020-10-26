@@ -33,6 +33,18 @@ func buildBreakdown(startDate string, endDate string) *elastic.FilterAggregation
 // buildDateRangeQuery builds a range query and extracts results based on a
 // specific date range.
 func buildDateRangeQuery(startDate string, endDate string) *elastic.BoolQuery {
+	if len(startDate) == 0 {
+		return elastic.NewBoolQuery().Must(
+			elastic.NewRangeQuery("date").Lte(endDate),
+		)
+	}
+
+	if len(endDate) == 0 {
+		return elastic.NewBoolQuery().Must(
+			elastic.NewRangeQuery("date").Gte(startDate),
+		)
+	}
+
 	return elastic.NewBoolQuery().Must(
 		elastic.NewRangeQuery("date").Gte(startDate).Lte(endDate),
 	)

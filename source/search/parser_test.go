@@ -2,6 +2,7 @@ package search
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 
 	elastic "github.com/olivere/elastic"
@@ -68,4 +69,21 @@ func TestExtractResult(t *testing.T) {
 			assert.Equal(t, len(response), test.BreakdownLen)
 		})
 	}
+}
+
+func TestSearchResultHasErr(t *testing.T) {
+	err := &elastic.ErrorDetails{
+		Type:       "dimensions",
+		Reason:     "something failed. All the best with debugging =)",
+		ResourceId: "soem-id",
+		Index:      "dimensions",
+	}
+
+	es, er := New()
+	if er != nil {
+		t.Errorf("Test failed with err: %v", er)
+	}
+
+	elasticErr := es.searchResultHasErr(err)
+	assert.Equal(t, elasticErr, errors.New(err.Reason))
 }

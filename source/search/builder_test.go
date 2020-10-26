@@ -25,10 +25,18 @@ func TestBuildDateRangeQuery(t *testing.T) {
 		endDate     string
 		fixtureName string
 	}{
-		"Basic reuqest with both upper and lower limits": {
+		"Basic request with both upper and lower limits": {
 			startDate:   "2020-06-01",
 			endDate:     "2020-06-02",
 			fixtureName: "TestDateRangeQuery_1",
+		},
+		"Basic request with only lower limit": {
+			startDate:   "2020-06-01",
+			fixtureName: "TestDateRangeQuery_2",
+		},
+		"Basic reauest with only upper limit": {
+			endDate:     "2020-06-02",
+			fixtureName: "TestDateRangeQuery_3",
 		},
 	}
 
@@ -39,11 +47,6 @@ func TestBuildDateRangeQuery(t *testing.T) {
 			if query != nil {
 				src, err := query.Source()
 				assert.Nil(t, err)
-				/*fmt.Println("*******************************")
-
-				d, _ := json.Marshal(src)
-				logrus.Debugf("BREAKDOWN SOURCE: %s\n", d)
-				fmt.Println(string(d))*/
 
 				jsonFile, jsonData := getJSONFileData(t, src, test.fixtureName)
 

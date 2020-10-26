@@ -1,0 +1,1 @@
+{"bool":{"must":{"range":{"date":{"from":null,"include_lower":true,"include_upper":true,"to":"2020-06-02"}}}}}
