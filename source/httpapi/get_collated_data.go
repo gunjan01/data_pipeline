@@ -22,6 +22,12 @@ func (h *HTTPAPI) GetCollatedData(w http.ResponseWriter, r *http.Request) {
 	startDate := r.URL.Query().Get("start_date")
 	endDate := r.URL.Query().Get("end_date")
 
+	if len(startDate) == 0 && len(endDate) == 0 {
+		logrus.Errorf("You must specify a date-range for the endpoint to work")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	client, err := search.New()
 	if err != nil {
 		panic(err)
