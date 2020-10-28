@@ -23,21 +23,6 @@ services:
     networks:
       - elk
 
-  logstash:
-    image: docker.elastic.co/logstash/logstash-oss:6.2.2
-    volumes:
-      - ./logstash/:/usr/share/logstash/pipeline:ro
-    ports:
-      - "5000:5000"
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
-    links:
-      - elasticsearch
-
 networks:
   elk:
     driver: bridge

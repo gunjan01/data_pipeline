@@ -4,7 +4,7 @@ build:
 
 test:
 	echo "Running unit tests"
-	go test -v ./...
+	go test -short -v ./...
 
 format:
 	goimports -l -w .

@@ -16,7 +16,6 @@ type HTTPAPI struct {
 
 // GetCollatedData returns the squashed data for a particular date range.
 func (h *HTTPAPI) GetCollatedData(w http.ResponseWriter, r *http.Request) {
-	defer r.Body.Close()
 	w.Header().Set("Content-Type", "application/json")
 
 	startDate := r.URL.Query().Get("start_date")
