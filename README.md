@@ -16,12 +16,13 @@ I have written a simple function that reads a CSV line by line and dumps it into
 After loading the data into elasticsearch, I have exposed a simple endpoint to query it. Once the project is fired,
 a simple http server runs on `9090` and the endpoint can be hit to see the squashed data for a specific date range. A sample would like: `http://localhost:9090/data?start_date=2020-06-01&end_date=2020-06-02`
 
-The heart of the implementation is in the search package inside source. The package has aggregation and filter queries that we perform on the index to squash data according to the requirement. Data is squashed according to
-the date range passed. The implementation aggregates the data on the dimensions and applies a sum on it.
+The heart of the implementation is in the search package inside source. The package has aggregation and filter queries that are performed on the index to squash data according to the requirement. Data is squashed according to
+the date range passed. The implementation aggregates the data on the dimensions and applies a sum to it.
 
 If you rebuild the project, you can use `curl -XDELETE http://localhost:9200/dimensions` to delete the previous index.
 
-Disclaimer: While loading the CSV into the index, I have used the first value as a float. This is because if elastic encounters an Integer value on the first insertion field, it dynamically maps the field to type long which will end up rounding off sum aggregation results. Therefore, I changed teh first field to float in the CSV and did not write a seperate mapping file for dumping data to get the dynamic mapping during insertion.
+Disclaimer: While loading the CSV into the index, I have used the first value of type float. This is because if elastic encounters an Integer value on the first insertion field, it dynamically maps the field to type long which will end up rounding off sum aggregation results. Therefore, I changed the first field to a floating number in the CSV and opted to not write a seperate mapping file for dumping data for the purpose of this assignment. Elastic will
+dynamically map the right types on insertion.
 
 ## Setup
 
